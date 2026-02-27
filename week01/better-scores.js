@@ -16,49 +16,56 @@ Develop a small JavaScript program to manage the scores given to your user on we
 */
 
 
-const scores = [3, -2, 10, 0, -5, -8, 7, 4, -1, 9, 6] ;
+const scores = [3, -2, 10, 0, -5, 7, 4, -1, 9, 6] ;
+console.log("Starting vector:", scores)
 
-const newscores = []
+/* remove negative number (difficult to manage)
+
+const newScores = [...scores] // make a copy for keep scores safe
+
+for ( let i=0; i<newScores.length; i++ ) {
+  const value = newScores[i]
+  if (value<0) {
+    newScores.splice(i, 1)
+  }
+}
+*/
+
+// add positive numbers to a new array
+const newScores = []
 
 for (const value of scores) {
   if (value >= 0) {
-    newscores.push(value)
+    newScores.push(value)
   }
 }
+console.log("Vector without negatives:", newScores)
 
-for (const c of [1,2]) {
-  const smallest = Math.min(...newscores)
-  const pos_smallest = newscores.indexOf(smallest)
-  console.log("Smallest", smallest, "at position", pos_smallest)
-  console.log(`The smallest value is ${smallest} and is at position ${pos_smallest}`)
-  newscores.splice(pos_smallest,1)
-}
+// remove lowest two
+let smallest = Math.min(...newScores)
+let pos_smallest = newScores.indexOf(smallest)
+console.log("First smallest:", smallest, ", at position:", pos_smallest)
+newScores.splice(pos_smallest, 1)
 
+smallest = Math.min(...newScores)
+pos_smallest = newScores.indexOf(smallest)
+console.log("Second smallest:", smallest, ", at position:", pos_smallest)
+newScores.splice(pos_smallest, 1)
+
+// alternatevely with
+// for (const c of [1,2]) ...
+
+// calculating avg
 let avg = 0.0
-for (const value of newscores) {
+for (const value of newScores) {
   avg += value
 }
-avg /= newscores.length
+avg /= newScores.length
 avg = Math.round(avg)
+console.log("AVG:",avg)
 
-console.log(avg)
-
-while( scores.length > newscores.length) {
-  newscores.push(avg)
+while (newScores.length < scores.length) {
+  newScores.push(avg)
 }
 
-
-// const newscores = [...scores]  // make a copy
-
-// for (let i = 0 ; i<newscores.length; i++ ) {
-//   const value = newscores[i]
-//   if(value<0) {
-//     newscores.splice(i, 1)
-//   }
-//   console.log(value)
-// }
-console.log(scores)
-console.log(newscores)
-
-// console.log(scores)
-
+console.log("Final vector:", newScores)

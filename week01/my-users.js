@@ -1,3 +1,4 @@
+
 "use strict" ;
 
 /*
@@ -16,36 +17,38 @@ Develop a small JS program to manage the list of users in a website.
   - Extra: in alphabetical order of acronym.
 */
 
-// split the string into the indivudual names
 const names = "Luigi De Russis, Francesca Russo, Fulvio Corno, Luca Scibetta, Alberto Monge Roffarello" ;
-const list_names = names.split(',')
+console.log(`Names: ${names}`)
 
-// remove extra spaces from beginning/end of each name
+const list_names = names.split(",")
+
+for (let i=0; i < list_names.length; i++) {
+  list_names[i] = list_names[i].trim()
+}
+console.log("List of names:",list_names)
+
+/* alternatively
 const list_2 = []
-for( const name of list_names )
+for (const name of list_names) {
   list_2.push(name.trim())
+}
+*/
 
-// create a list with acronyms
-const acronyms = []
-for(const name of list_2) {
-  let components = name.split(' ') // an array with each component of the name
-  // Example: ['Luigi', 'De', 'Russis']
-
-  let first_letters = ""
-  for (const each of components)
-    first_letters += each[0]
-
-  first_letters = first_letters.toUpperCase() // convert to uppercase, just to be sure
-  acronyms.push(first_letters)
+const list_acr = []
+for (const name of list_names) {
+  const name_parts = name.split(" ")
+  const name_letters = []
+  for (const part of name_parts) {
+    const first = part.substring(0,1)
+    name_letters.push(first)
+  }
+  const letters = name_letters.join("")
+  list_acr.push(letters)
 }
 
-// console.log(acronyms)   // example: ['LDR', 'FR', 'FC', 'LS', 'AMR']
+console.log("List of acronyms:",list_acr)
 
-// sort by alpha order of acronym
-acronyms.sort()
+// extra
+const list_acr_ord = list_acr.sort()
+console.log(`Ordered list of acronyms (with different type of print): ${list_acr_ord}`)
 
-// finally, join the acronyms together as a string
-
-const output = acronyms.join(', ')
-
-console.log(output)
