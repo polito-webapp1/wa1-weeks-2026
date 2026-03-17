@@ -1,0 +1,19 @@
+{
+  "name": "exercise3",
+  "version": "1.0.0",
+  "description": "Entities:     User            URL: http://localhost:3001/api/v1/users     Question        URL: ............................/questions     Answer          URL: ............................/answers",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.20",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.1",
+    "morgan": "^1.10.1",
+    "sqlite3": "^6.0.1"
+  }
+}
