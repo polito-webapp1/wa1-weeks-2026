@@ -19,8 +19,9 @@ app.use(morgan("dev"));
 
 const corsOptions = {
   origin: 'http://localhost:5173',
+  optionsSuccessState: 200,
   credentials: true
-}
+};
 app.use(cors(corsOptions))
 
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
@@ -45,6 +46,7 @@ const isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
   }
+  console.log(req.user)
   return res.status(401).json({error: "Not authorized"});
 }
 

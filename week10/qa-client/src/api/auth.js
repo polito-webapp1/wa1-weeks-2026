@@ -7,7 +7,8 @@ async function doLogin( username, password ) {
         }),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
     })
 
     if (response.ok) {
@@ -19,7 +20,7 @@ async function doLogin( username, password ) {
 }
 
 async function doLogout() {
-        const response = await fetch('http://localhost:3001/api/sessions', {
+        const response = await fetch('http://localhost:3001/api/sessions/current', {
         method: 'DELETE',
         credentials: 'include'
     })
@@ -27,7 +28,7 @@ async function doLogout() {
     if (response.ok) {
         return true
     } else {
-        throw new Error("Login failed")
+        throw new Error("Logout failed")
     }
 }
 

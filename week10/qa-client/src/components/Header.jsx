@@ -14,7 +14,7 @@ function Header(props) {
     <Navbar bg='info' >
       <Container fluid>
         <h1 style={{ color: 'white' }} ><Link to={destination}>HeapOverrun</Link></h1>
-        <p>{user.name ? <UserInfo name={user.name}/> : <LoginButton/>}</p>
+        <div>{user.name ? <UserInfo name={user.name}/> : <LoginButton/>}</div>
       </Container>
     </Navbar>)
 }
