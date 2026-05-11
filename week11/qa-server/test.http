@@ -1,0 +1,73 @@
+GET http://localhost:3001/api/questions
+
+###
+
+GET http://localhost:3001/api/questions/2/answers
+
+###
+
+POST http://localhost:3001/api/questions/2/answers
+content-type: application/json
+
+{
+  "text": "Last year, it had about 3400 first-timers.",
+  "author": {
+    "email": "luigi.derussis@polito.it",
+    "id": 1
+  },
+  "score": 0,
+  "date": "2026-03-15"
+}
+
+###
+
+PUT http://localhost:3001/api/answers/5
+content-type: application/json
+
+{
+  "text": "Last year, it had about 340 first-timers.",
+  "author": {
+    "email": "luigi.derussis@polito.it",
+    "id": 1
+  },
+  "score": 0,
+  "date": "2025-03-15"
+}
+
+###
+
+POST http://localhost:3001/api/answers/2/vote
+content-type: application/json
+
+{
+  "vote": "up"
+}
+
+###
+
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+  "username": "luigi.derussis@polito.it",
+  "password": "password" 
+}
+
+###
+
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+  "username": "luigi.derussis@polito.it",
+  "password": "wrong_password" 
+}
+
+###
+
+DELETE http://localhost:3001/api/sessions/current
+
+
+###
+
+GET http://localhost:3001/api/sessions/current
