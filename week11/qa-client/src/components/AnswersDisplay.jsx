@@ -5,7 +5,7 @@ import { useParams } from 'react-router';
 
 
 import UserContext from "../contexts/UserContext";
-import {getAnswersByQuestionId} from '../api/api'
+import {getAnswersByQuestionId, upVoteAnswer} from '../api/api'
 
 function AnswersTable(props) {
 
@@ -103,7 +103,7 @@ function AnswerRow(props) {
             <td>{ans.date.format('YYYY-MM-DD')}</td>
             <td>{ans.text}</td>
             <td>{ans.email}</td>
-            <td>{ans.score}</td>
+            <td>{ans.score} {ans.fake && '*'}</td>
             <AnswerActionButtons enterEditMode={props.enterEditMode} enableButtons={props.enableButtons} answer={ans} upVote={props.upVote} delAnswer={props.delAnswer} />
         </tr>
     )
@@ -116,7 +116,7 @@ function AnswerActionButtons(props) {
 
     return <td>
         <Button disabled={!props.enableButtons || !user.id || user.id == props.answer.userId}
-            variant='primary' onClick={() => props.upVote(props.answer.id)}><ArrowUpSquare /></Button> <></>
+            variant='primary' onClick={() => props.upVote(props.answer)}><ArrowUpSquare /></Button> <></>
         <Button disabled={!props.enableButtons || !user.id || user.id != props.answer.userId}
             variant='warning'><Pencil onClick={() => props.enterEditMode(props.answer)} /></Button> <></>
         <Button disabled={!props.enableButtons || !user.id || user.id != props.answer.userId}
@@ -133,6 +133,8 @@ function AnswersDisplay(props) {
     const { questionId } = useParams()
 
     const [waiting, setWaiting] = useState(true)
+
+    // Loading of initial answer list
     useEffect(() => {
         setWaiting(true)
         getAnswersByQuestionId(questionId)
@@ -141,6 +143,21 @@ function AnswersDisplay(props) {
                 setWaiting(false)
             })
     }, [questionId])
+
+    // Upvote of an answer
+    const upVote = async (ans) => {
+        // setWaiting(true)
+
+        // optimistically modify the state by assuming the vote went well
+        setAnswers(oldanswers => oldanswers.map(a => (a.id == ans.id ? { ...a, score: a.score + 1, fake:true } : a)))
+
+        // call API for upvoting
+        await upVoteAnswer(ans.id)
+        // update the 'answers' state
+        const answers = await getAnswersByQuestionId(questionId)
+        setAnswers(answers)
+        // setWaiting(false)
+    }
 
 
     const my_answers = answers // all of them
@@ -154,7 +171,7 @@ function AnswersDisplay(props) {
                 <Col as='h2' className='text-start'>Answers for question {questionId}:</Col>
             </Row>
             <Row>
-                <AnswersTable mode={mode} setMode={setMode} answers={my_answers} upVote={props.upVote} delAnswer={props.delAnswer} addAnswer={props.addAnswer} updateAnswer={props.updateAnswer}></AnswersTable>
+                <AnswersTable mode={mode} setMode={setMode} answers={my_answers} upVote={upVote} delAnswer={props.delAnswer} addAnswer={props.addAnswer} updateAnswer={props.updateAnswer}></AnswersTable>
             </Row>
         </>
     )
