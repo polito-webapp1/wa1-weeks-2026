@@ -45,6 +45,12 @@ content-type: application/json
 
 ###
 
+DELETE http://localhost:3001/api/answers/2
+
+
+
+###
+
 POST http://localhost:3001/api/sessions
 content-type: application/json
 

@@ -5,7 +5,7 @@ import { useParams } from 'react-router';
 
 
 import UserContext from "../contexts/UserContext";
-import {getAnswersByQuestionId, upVoteAnswer} from '../api/api'
+import {addAnswer, deleteAnswer, getAnswersByQuestionId, updateAnswer, upVoteAnswer} from '../api/api'
 
 function AnswersTable(props) {
 
@@ -120,7 +120,7 @@ function AnswerActionButtons(props) {
         <Button disabled={!props.enableButtons || !user.id || user.id != props.answer.userId}
             variant='warning'><Pencil onClick={() => props.enterEditMode(props.answer)} /></Button> <></>
         <Button disabled={!props.enableButtons || !user.id || user.id != props.answer.userId}
-            variant='danger' onClick={() => props.delAnswer(props.answer.id)}><Trash /></Button>
+            variant='danger' onClick={() => props.delAnswer(props.answer)}><Trash /></Button>
     </td>
 }
 
@@ -159,6 +159,27 @@ function AnswersDisplay(props) {
         // setWaiting(false)
     }
 
+    // Delete an answer
+    const deleteAns = async(ans) => {
+        await deleteAnswer(ans.id)
+        const answers = await getAnswersByQuestionId(questionId)
+        setAnswers(answers)
+    }
+
+    // Add an answer
+    const addAnswerHandler = async(text) => {
+        await addAnswer(questionId, text)
+        const answers = await getAnswersByQuestionId(questionId)
+        setAnswers(answers)
+    }
+
+    // Update an answer
+    const updateAnswerHandler = async(id, text) => {
+        await updateAnswer(id, text)
+        const answers = await getAnswersByQuestionId(questionId)
+        setAnswers(answers)
+    }
+
 
     const my_answers = answers // all of them
     // const my_answers = props.answers.filter( ans => ans.questionId == questionId)
@@ -171,7 +192,7 @@ function AnswersDisplay(props) {
                 <Col as='h2' className='text-start'>Answers for question {questionId}:</Col>
             </Row>
             <Row>
-                <AnswersTable mode={mode} setMode={setMode} answers={my_answers} upVote={upVote} delAnswer={props.delAnswer} addAnswer={props.addAnswer} updateAnswer={props.updateAnswer}></AnswersTable>
+                <AnswersTable mode={mode} setMode={setMode} answers={my_answers} upVote={upVote} delAnswer={deleteAns} addAnswer={addAnswerHandler} updateAnswer={updateAnswerHandler}></AnswersTable>
             </Row>
         </>
     )

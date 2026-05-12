@@ -2,12 +2,13 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { listQuestions, getQuestion, getAnswers, addAnswer, updateAnswer, voteAnswer, getUser } from "./dao.js";
+import { listQuestions, getQuestion, getAnswers, addAnswer, updateAnswer, voteAnswer, getUser, deleteAnswer } from "./dao.js";
 import { check, validationResult } from "express-validator";
 
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
+import dayjs from 'dayjs'
 
 // init
 const app = express();
@@ -112,17 +113,24 @@ app.get("/api/questions/:id/answers", async (req, res) => {
 
 // POST /api/questions/<id>/answers
 app.post("/api/questions/:id/answers", isLoggedIn, [
-  check("text").notEmpty(),
-  check("author.email").isEmail(),
-  check("score").isNumeric(),
-  check("date").isDate({format: "YYYY-MM-DD", strictMode: true})
+  check("text").notEmpty()
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({errors: errors.array()});
   }
 
-  const newAnswer = req.body;
+  // const newAnswer = req.body;
+  const newAnswer = {
+    text: req.body.text,
+    author: {
+      email: req.user.username,
+      id: req.user.id,
+    },
+    score: 0,
+    date: dayjs().format('YYYY-MM-DD')
+  }
+  // console.log(newAnswer)
   const questionId = req.params.id;
 
   try {
@@ -136,17 +144,23 @@ app.post("/api/questions/:id/answers", isLoggedIn, [
 
 // PUT /api/answers/<id>
 app.put("/api/answers/:id", isLoggedIn, [
-  check("text").notEmpty(),
-  check("author.email").isEmail(),
-  check("score").isNumeric(),
-  check("date").isDate({format: "YYYY-MM-DD", strictMode: true})
+  check("text").notEmpty()
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({errors: errors.array()});
   }
 
-  const answerToUpdate = req.body;
+  const answerToUpdate = {
+      text: req.body.text,
+      author: {
+        email: req.user.username,
+        id: req.user.id,
+      },
+    score: 0,
+    date: dayjs().format('YYYY-MM-DD')
+   }
+
   answerToUpdate.id = req.params.id;
 
   try {
@@ -156,6 +170,22 @@ app.put("/api/answers/:id", isLoggedIn, [
     res.status(503).json({"error": `Impossible to update answer #${req.params.id}.`});
   }
 });
+
+// DELETE /api/answers/<id>
+app.delete("/api/answers/:id", isLoggedIn, async (req, res) => {
+
+  // checking the correct authorization level
+  // id is present and is a valid answer (the DB will check)
+  // the owner of the answer is the currently logged in user -> answer.userid == req.user.id
+
+  try {
+    await deleteAnswer(req.params.id);
+    res.status(200).end();
+  } catch {
+    res.status(503).json({"error": `Impossible to delete answer #${req.params.id}.`});
+  }
+});
+
 
 
 app.use(isLoggedIn)

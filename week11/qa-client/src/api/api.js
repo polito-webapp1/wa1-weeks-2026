@@ -55,7 +55,69 @@ async function upVoteAnswer(answerId) {
     } catch (e) {
         throw new Error("Network error in upVote", { cause: e })
     }
+}
+
+async function deleteAnswer(answerId) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/answers/${answerId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+            return true
+        } else {
+            throw new Error("deleteAnswer failed with code " + response.status)
+        }
+    } catch (e) {
+        throw new Error("Network error in deleteAnswer", { cause: e })
+    }
+}
+
+async function addAnswer(questionId, text) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/questions/${questionId}/answers`, {
+            method: 'POST',
+            body: JSON.stringify({ text: text }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+            return true
+        } else {
+            throw new Error("Error in addAnswer")
+        }
+    } catch (ex) {
+        throw new Error("Network error in addAnswer")
+    }
 
 }
 
-export { getQuestions, getAnswersByQuestionId, upVoteAnswer }
+async function updateAnswer(answerId, text) {
+    try {
+        const response = await fetch(`http://localhost:3001/api/answers/${answerId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ text: text }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+
+        if (response.ok) {
+            return true
+        } else {
+            throw new Error("Error in updateAnswer")
+        }
+    } catch (ex) {
+        throw new Error("Network error in updateAnswer")
+    }
+
+}
+
+
+
+export { getQuestions, getAnswersByQuestionId, upVoteAnswer, deleteAnswer, addAnswer, updateAnswer }

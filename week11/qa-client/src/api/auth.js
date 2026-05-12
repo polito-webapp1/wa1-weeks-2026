@@ -32,4 +32,15 @@ async function doLogout() {
     }
 }
 
-export {doLogin, doLogout}
+async function checkSession() {
+    const response = await fetch('http://localhost:3001/api/sessions/current', {
+        credentials: "include"
+    })
+    if(response.ok) {
+        return await response.json()
+    } else {
+        return null
+    }
+}
+
+export {doLogin, doLogout, checkSession}

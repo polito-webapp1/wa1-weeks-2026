@@ -18,6 +18,7 @@ import UserContext from './contexts/UserContext.js';
 
 import { Answer, Question } from './models/QAModels.js';
 import { getQuestions } from './api/api.js';
+import { checkSession } from './api/auth.js';
 
 function App() {
   const fakeAnswers = []
@@ -45,47 +46,27 @@ function App() {
     getQuestionList()
     }, [] )
 
+      // Currently logged-in user
+    const [user, setUser] = useState({ id: undefined, email: undefined, name: undefined })
 
-  // Currently logged-in user
-  const [user, setUser] = useState({ id: undefined, email: undefined, name: undefined })
+
+    // try to restore the login session
+    useEffect(()=>{
+      checkSession().then(result => {
+        if(result) {
+          setUser({ id: result.id, email: result.username, name: result.name })
+        }
+      })
+    }, [])
+
+
 
   const doLogin = (newUser) => {
     setUser({ id: newUser.id, email: newUser.username, name: newUser.name })
     navigate('/home')
   }
 
-  const upVote = (id) => {
-    setAnswers(ans => ans.map(a => (a.id == id ? { ...a, score: a.score + 1 } : a)))
-  }
 
-  const delAnswer = (id) => {
-    setAnswers(ans => ans.filter(a => a.id != id))
-  }
-
-  const addAnswer = (text) => {
-
-    if (user.id == undefined) {
-      throw new Error("No User ID")
-    }
-    const newId = Math.max(...answers.map(a => a.id)) + 1
-
-    const ans = new Answer(
-      newId, // the ID must be assigned by whoever is managing the list
-      text, // coming from the user (the form)
-      user.email, // must come from user login
-      user.id, // userId -> from login
-      dayjs(), // date: today
-      0 // score
-    )
-
-    setAnswers((oldAnswers) => [...oldAnswers, ans])
-  }
-
-  const updateAnswer = (id, text) => {
-
-    setAnswers(oldAnswers => oldAnswers.map(ans => ans.id != id ? ans : { ...ans, text: text }))
-
-  }
 
   return (
     <UserContext.Provider value={user}>

@@ -107,6 +107,18 @@ export const voteAnswer = (answerId, value) => {
   });
 }
 
+// vote on an existing answer, with up = +1 and down = -1
+export const deleteAnswer = (answerId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM answer WHERE id = ?";
+    db.run(sql, [answerId], function(err) {
+      if(err) reject(err);
+      else resolve(this.changes);
+    });
+  });
+}
+
+
 /* USERS */
 export const getUser = (email, password) => {
   return new Promise((resolve, reject) => {
